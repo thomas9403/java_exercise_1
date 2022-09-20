@@ -8,8 +8,9 @@ public class Bienvenue {
 
         String input = scanner.nextLine();
 
-        if (!"quit".equals(input)) {
+        while (!input.equals("quit")) {
             System.out.println("Unknown command");
+            input = scanner.nextLine();
         }
     }
 }
