@@ -10,14 +10,16 @@ public class Bienvenue {
 
         while (!input.equals("quit")) {
             if("fibo".equalsIgnoreCase((input))){
-                System.out.println("Entrer un nombre");
+                System.out.println("Entrer un nombre:");
                 int n = scanner.nextInt();
-                System.out.println("Fibonacci de " + n + " est " + Fibonacci.fibo(n));
+                System.out.println("F(" + n + ") = " + Fibonacci.fibo(n));
+                input = scanner.nextLine();
             }
             else {
                 System.out.println("Unknown command");
-                input = scanner.nextLine();
             }
+            input = scanner.nextLine();
         }
+        scanner.close();
     }
 }
