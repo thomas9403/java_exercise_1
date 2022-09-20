@@ -8,6 +8,8 @@ public class Bienvenue {
 
         String input = scanner.nextLine();
 
-        System.out.println("Vous avez saisi: " + input);
+        if (!"quit".equals(input)) {
+            System.out.println("Unknown command");
+        }
     }
 }
