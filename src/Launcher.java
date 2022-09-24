@@ -41,7 +41,6 @@ public class Launcher
                 {
                     throw new RuntimeException(e);
                 }
-                input = scanner.nextLine();
             }
             else
             {
@@ -65,16 +64,6 @@ public class Launcher
 
     public static void freq (String path) throws java.io.IOException
     {
-        /*Path path1 = Paths.get(path);
-        String text = Files.readString(path1);
-        text = text.toLowerCase();
-        text = text.replaceAll("\s+", " ").replaceAll("[^a-z0-9 ]", "");
-        String[] words = text.split(" ");
-        for (int i = 0; i < words.length; i++)
-        {
-            System.out.println(words[i]);
-        }*/
-        //compter les occurences de chaque mot et les trier par ordre décroissant en utilisant split et sort
         Map<String, Integer> map = new TreeMap<>();
 
         FileInputStream fis = new FileInputStream(path);
@@ -90,9 +79,8 @@ public class Launcher
                 }
             }
         }
-        //map.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).forEach(System.out::println);
-        //afficher les mots sur la même ligne
         map.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).forEach(e -> System.out.print(e.getKey() + " "));
+        System.out.println();
         sc.close();
     }
 
