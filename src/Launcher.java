@@ -1,91 +1,102 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
-import java.io.FileInputStream;
 import java.util.Map;
 
-import java.util.TreeMap;
-
-public class Launcher
-{
-    public static void main(String[] args) throws IOException
-    {
-        hello();
-
-        System.out.println("Bienvenue");
-
+public class Launcher  {
+    public static void main(String[] args) throws IOException {
+        
+        System.out.println("Bonjour");
         var scanner = new Scanner(System.in);
-
         String input = scanner.nextLine();
-
-        while (!input.equals("quit"))
-        {
-            if ("fibo".equalsIgnoreCase((input)))
-            {
-                System.out.println("Entrer un nombre:");
-                int n = scanner.nextInt();
-                System.out.println("F(" + n + ") = " + Fibonacci.fibo(n));
-                input = scanner.nextLine();
-            }
-            else if ("freq".equalsIgnoreCase(input))
-            {
-                System.out.println("Entrer un chemin:");
-                String path = scanner.nextLine();
-                try
-                {
-                    freq(path);
-                }
-                catch (IOException e)
-                {
-                    throw new RuntimeException(e);
+        List<Command> commands = new ArrayList<Command>();
+        commands.add(new Freq());
+        commands.add(new Fibo());
+        commands.add(new Quit());
+        while (!"quit".equalsIgnoreCase(input)) {
+            Boolean found = false;
+            for (Command command : commands) {
+                if (command.name().equalsIgnoreCase(input)) {
+                    found = true;
+                    command.run(scanner);
+                    break;
                 }
             }
-            else
-            {
+            if (!found) {
                 System.out.println("Unknown command");
             }
             input = scanner.nextLine();
         }
-        scanner.close();
     }
-
-
-    public static int fibo ( int n)
-    {
-        if (n <= 1)
-        {
-            return n;
+    public static int fibo(int nb) {
+        if(nb <= 1) {
+            return nb;
         }
-        return fibo(n - 1) + fibo(n - 2);
+        return fibo(nb-1) + fibo(nb-2);
     }
 
-
-    public static void freq (String path) throws java.io.IOException
-    {
-        Map<String, Integer> map = new TreeMap<>();
-
-        FileInputStream fis = new FileInputStream(path);
-        Scanner sc = new Scanner(fis);
-
-        while (sc.hasNextLine()) {
-            String[] words = sc.nextLine().replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
-            for (String word : words) {
-                if (!map.containsKey(word)) {
-                    map.put(word, 1);
-                } else {
-                    map.put(word, map.get(word) + 1);
-                }
-            }
+    public static void freq(String path) throws IOException {
+        Path filePath = Paths.get(path);
+        String content = Files.readString(filePath);
+        if(content.isEmpty()) {
+            System.out.println("Empty file");
         }
-        map.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(3).forEach(e -> System.out.print(e.getKey() + " "));
-        System.out.println();
-        sc.close();
+        content = content.toLowerCase();
+        Stream<String> stream = Arrays.stream(content.replaceAll("[^a-zA-Z]", " ").split(" ")).filter(word -> !word.isEmpty());
+        Map<String,Long> result = stream.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        result.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).limit(3).forEach(entry -> System.out.print(entry.getKey() + " "));
+        System.out.print("\n");
     }
+}
 
-    public static void hello()
-    {
-        System.out.println("Hello World !");
+interface Command {
+    String name();
+    Boolean run(Scanner scanner);
+}
+class Quit implements Command {
+    public String name() {
+        return "quit";
+    }
+    public Boolean run(Scanner scanner) {
+        return true;
+    }
+}
+class Fibo implements Command {
+    public String name() {
+        return "fibo";
+    }
+    public Boolean run(Scanner scanner) {
+        System.out.println("Entrez un nombre n :");
+        // get the input from the user and convert it to an integer using Integer.parseInt() method
+        int nb = Integer.parseInt(scanner.nextLine());
+        if (nb < 0) {
+            System.out.println("Le nombre doit être positif");
+        } else {
+            System.out.println("f("+nb+") = " + Launcher.fibo(nb));
+        }
+        return false;
+    }
+}
+class Freq implements Command {
+    public String name() {
+        return "freq";
+    }
+    public Boolean run(Scanner scanner) {
+        System.out.println("Entrez le chemin du fichier :");
+        String path = scanner.nextLine();
+        try {
+            Launcher.freq(path);
+        } catch (IOException e) {
+            System.out.println("Unreadable file :" + e.getClass().getSimpleName() + e.getMessage());
+        }
+        return false;
     }
 }
