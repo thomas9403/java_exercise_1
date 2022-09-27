@@ -11,8 +11,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-public class Launcher  {
-    public static void main(String[] args) throws IOException {
+public class Launcher  
+{
+    public static void main(String[] args) throws IOException 
+    {
         
         System.out.println("Bienvenue !");
         var scanner = new Scanner(System.in);
@@ -21,32 +23,39 @@ public class Launcher  {
         commands.add(new Freq());
         commands.add(new Fibo());
         commands.add(new Quit());
-        while (!"quit".equalsIgnoreCase(input)) {
+        while (!"quit".equalsIgnoreCase(input)) 
+        {
             Boolean found = false;
             for (Command command : commands) {
-                if (command.name().equalsIgnoreCase(input)) {
+                if (command.name().equalsIgnoreCase(input)) 
+                {
                     found = true;
                     command.run(scanner);
                     break;
                 }
             }
-            if (!found) {
+            if (!found) 
+            {
                 System.out.println("Unknown command");
             }
             input = scanner.nextLine();
         }
     }
-    public static int fibo(int nb) {
-        if(nb <= 1) {
+    public static int fibo(int nb) 
+    {
+        if(nb <= 1) 
+        {
             return nb;
         }
         return fibo(nb-1) + fibo(nb-2);
     }
 
-    public static void freq(String path) throws IOException {
+    public static void freq(String path) throws IOException 
+    {
         Path filePath = Paths.get(path);
         String content = Files.readString(filePath);
-        if(content.isEmpty()) {
+        if(content.isEmpty()) 
+        {
             System.out.println("Empty file");
         }
         content = content.toLowerCase();
@@ -55,6 +64,8 @@ public class Launcher  {
         result.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).limit(3).forEach(entry -> System.out.print(entry.getKey() + " "));
         System.out.print("\n");
     }
+
+    
 }
 
 interface Command 
