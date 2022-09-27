@@ -1,201 +1,69 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
+import java.util.stream.Stream;
 
-public class Launcher  
-{
-    public static void main(String[] args) throws IOException 
-    {
-        
-        System.out.println("Bienvenue !");
+public class Launcher  {
+    public static void main(String[] args) throws IOException {
         var scanner = new Scanner(System.in);
+        System.out.println("Entrez une commande :");
         String input = scanner.nextLine();
-        List<Command> commands = new ArrayList<Command>();
+        List<Command> commands = new ArrayList<>();
         commands.add(new Freq());
         commands.add(new Fibo());
         commands.add(new Quit());
-        while (true) 
-        {
-            Boolean found = false;
-            boolean result = true;
+        commands.add(new Predict());
+        while (true) {
+            boolean found = false;
+            boolean result = false;
             for (Command command : commands) {
-                if (command.name().equalsIgnoreCase(input)) 
-                {
+                if (command.name().equalsIgnoreCase(input)) {
                     found = true;
                     result = command.run(scanner);
                     break;
                 }
             }
-            if (!found) 
-            {
+            if (!found) {
                 System.out.println("Unknown command");
             }
+            if (result) {
+                break;
+            }
+            System.out.println("Entrez une commande :");
             input = scanner.nextLine();
         }
     }
-    public static int fibo(int nb) 
-    {
-        if(nb <= 1) 
-        {
-            return nb;
+    public static int fibo(int n) {
+        if (n == 0) {
+            return 0;
         }
-        return fibo(nb-1) + fibo(nb-2);
-    }
-
-    public static void freq(String path) throws IOException 
-    {
-        Path filePath = Paths.get(path);
-        String content = Files.readString(filePath);
-        if(content.isEmpty()) 
-        {
-            System.out.println("Empty file");
+        if (n == 1) {
+            return 1;
         }
-        content = content.toLowerCase();
-        Stream<String> stream = Arrays.stream(content.replaceAll("[^a-zA-Z]", " ").split(" ")).filter(word -> !word.isEmpty());
-        Map<String,Long> result = stream.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        result.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).limit(3).forEach(entry -> System.out.print(entry.getKey() + " "));
-        System.out.print("\n");
+        return fibo(n - 1) + fibo(n - 2);
     }
-
-    
-}
-
-
-
-// public class Launcher
-// {
-//     public static void main(String[] args)
-//     {
-//         List <Command> commands = new ArrayList <>();
-//         Scanner scanner = new Scanner(System.in);
-//         commands.add(new Quit());
-//         commands.add(new Fibo());
-//         commands.add(new Freq());
-//         // commands.add(new Preditct());
-//         System.out.println("Bienvenue !");
-        
-        
-//         while(true)
-//         {
-//             String input = scanner.nextLine();
-//             boolean result = false, check = true;
-//             for(Command command : commands)
-//             {
-//                 if(command.name().equalsIgnoreCase(input))
-//                 {
-//                     result = command.run(scanner);
-//                     check = false;
-//                     break;
-//                 }
-//             }
-
-//             if(result)
-//             {
-//                 break;
-//             }
-
-//             if(check)
-//             {
-//                 System.out.println("Unknown command");
-//             }
-//         }
-        
-
-//     }
-//     public static int fibo(int nb) 
-//     {
-//         if(nb <= 1) 
-//         {
-//             return nb;
-//         }
-//         return fibo(nb-1) + fibo(nb-2);
-//     }
-
-//     public static void freq(String path) throws IOException 
-//     {
-//         Path filePath = Paths.get(path);
-//         String content = Files.readString(filePath);
-//         if(content.isEmpty()) 
-//         {
-//             System.out.println("Empty file");
-//         }
-//         content = content.toLowerCase();
-//         Stream<String> stream = Arrays.stream(content.replaceAll("[^a-zA-Z]", " ").split(" ")).filter(word -> !word.isEmpty());
-//         Map<String,Long> result = stream.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-//         result.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).limit(3).forEach(entry -> System.out.print(entry.getKey() + " "));
-//         System.out.print("\n");
-//     }
-// }
-
-
-
-interface Command 
-{
-    String name();
-    Boolean run(Scanner scanner);
-}
-
-class Quit implements Command 
-{
-    public String name() 
-    {
-        return "quit";
-    }
-    public Boolean run(Scanner scanner) 
-    {
-        return true;
-    }
-}
-
-class Fibo implements Command 
-{
-    public String name() 
-    {
-        return "fibo";
-    }
-    public Boolean run(Scanner scanner) 
-    {
-        System.out.println("Entrez un nombre n :");
-        int nb = Integer.parseInt(scanner.nextLine());
-        if (nb < 0) 
-        {
-            System.out.println("Le nombre doit être positif");
-        } 
-        else 
-        {
-            System.out.println("f("+nb+") = " + Launcher.fibo(nb));
+    public static void freq(String path) throws IOException {
+        var path1 = Paths.get(path);
+        if (!path1.toFile().exists()) {
+            System.out.println("File not found");
+        } else {
+            var content = Files.readString(path1);
+            if (!content.isBlank()) {
+                content = content.toLowerCase();
+                content = content.replaceAll("\\r\\n|\\r|\\n", " ");
+                Stream<String> stream = Arrays.stream(content.replaceAll("[^\\w\\s ]", "").split(" ")).filter(word -> !word.isEmpty());
+                Map<String,Long> result = stream.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                result.entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).limit(3).forEach(entry -> System.out.print(entry.getKey() + " "));
+            } else {
+                System.out.println("Empty file");
+            }
         }
-        return false;
-    }
-}
-
-class Freq implements Command
-{
-    public String name() 
-    {
-        return "freq";
-    }
-    public Boolean run(Scanner scanner) 
-    {
-        System.out.println("Entrez le chemin du fichier :");
-        String path = scanner.nextLine();
-        try 
-        {
-            Launcher.freq(path);
-        } 
-        catch (IOException e) 
-        {
-            System.out.println("Unreadable file :" + e.getClass().getSimpleName() + e.getMessage());
-        }
-        return false;
     }
 }
