@@ -57,44 +57,60 @@ public class Launcher  {
     }
 }
 
-interface Command {
+interface Command 
+{
     String name();
     Boolean run(Scanner scanner);
 }
-class Quit implements Command {
-    public String name() {
+class Quit implements Command 
+{
+    public String name() 
+    {
         return "quit";
     }
-    public Boolean run(Scanner scanner) {
+    public Boolean run(Scanner scanner) 
+    {
         return true;
     }
 }
-class Fibo implements Command {
-    public String name() {
+class Fibo implements Command 
+{
+    public String name() 
+    {
         return "fibo";
     }
-    public Boolean run(Scanner scanner) {
+    public Boolean run(Scanner scanner) 
+    {
         System.out.println("Entrez un nombre n :");
         // get the input from the user and convert it to an integer using Integer.parseInt() method
         int nb = Integer.parseInt(scanner.nextLine());
-        if (nb < 0) {
+        if (nb < 0) 
+        {
             System.out.println("Le nombre doit être positif");
-        } else {
+        } 
+        else 
+        {
             System.out.println("f("+nb+") = " + Launcher.fibo(nb));
         }
         return false;
     }
 }
-class Freq implements Command {
-    public String name() {
+class Freq implements Command 
+{
+    public String name() 
+    {
         return "freq";
     }
-    public Boolean run(Scanner scanner) {
+    public Boolean run(Scanner scanner) 
+    {
         System.out.println("Entrez le chemin du fichier :");
         String path = scanner.nextLine();
-        try {
+        try 
+        {
             Launcher.freq(path);
-        } catch (IOException e) {
+        } 
+        catch (IOException e) 
+        {
             System.out.println("Unreadable file :" + e.getClass().getSimpleName() + e.getMessage());
         }
         return false;
