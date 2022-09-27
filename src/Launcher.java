@@ -14,7 +14,7 @@ import java.util.Map;
 public class Launcher  {
     public static void main(String[] args) throws IOException {
         
-        System.out.println("Bonjour");
+        System.out.println("Bienvenue !");
         var scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         List<Command> commands = new ArrayList<Command>();
@@ -95,6 +95,7 @@ class Fibo implements Command
         return false;
     }
 }
+
 class Freq implements Command 
 {
     public String name() 
